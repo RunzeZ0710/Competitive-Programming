@@ -1,0 +1,91 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <string>
+#include <cstdio>
+#include <cmath>
+#include <numeric>
+#include <set>
+#include <map>
+#include <tuple>
+using namespace std;
+using ll = long long;
+
+vector<pair<int, int>> milk= {};
+bool comp(const pair<int, int> &a, const pair<int, int> &b){
+	return (a.second > b.second);
+}
+bool comp2(const int &a, const int &b){
+	return a > b;
+}	
+
+int main(){
+	ios_base::sync_with_stdio(0); cin.tie(0); 
+	freopen("rental.in", "r", stdin);
+	freopen("rental.out", "w", stdout);
+	int n, m, r; cin >> n >> m >> r;
+	int arr[n];
+	for(int i = 0; i < n; i++){
+		int a; cin >> a;
+		arr[i] = a;
+	}	
+	for(int i = 0; i < m; i++){
+		int a, b; cin >> a >> b;
+		milk.push_back(make_pair(a, b));
+	}
+	long long rental[r];
+	for(int i = 0; i < r; i++){
+		long long a; cin >> a;
+		rental[i] = a;
+	}
+	sort(arr, arr+n, comp2);
+	sort(rental, rental+r, comp2);
+	sort(milk.begin(), milk.end(), comp);
+	vector<long long> cows = {};
+	int supply = 0;
+	int cur = 0;
+	long long sum = 0;
+	while(supply != n){
+		if(arr[supply] <= milk[cur].first){
+			sum += arr[supply] * milk[cur].second;
+			milk[cur].first -= arr[supply];
+			arr[supply] = 0;
+		}	
+		else if(arr[supply] > milk[cur].first){
+			sum += milk[cur].first * milk[cur].second;
+			arr[supply] -= milk[cur].first;
+			milk[cur].first = 0;
+			cur += 1;	
+		}
+		if(arr[supply] == 0) {supply++; cows.push_back(sum); sum = 0;}
+		if(cur == m){
+			cows.push_back(sum);
+			break;
+		}
+	}
+	int fill = n - cows.size();
+	for(int i = 0; i < fill; i++){
+		cows.push_back(0);
+	}
+	sort(cows.begin(), cows.end());
+	long long prefix[n+1] = {0};
+	for(int i = 1; i <= n; i++){
+		prefix[i] = prefix[i-1] + cows[i-1];
+	}
+	long long profit = prefix[n];
+	long long prefix2[r+1] = {0};
+	for(int i = 1; i <= r; i++){
+		prefix2[i] = prefix2[i-1] + rental[i-1];
+	}
+	// for(long long i : prefix) cout <<i << " ";
+	// cout << endl;
+	// for(long long i : prefix2) cout << i << " ";
+	// cout << endl;
+	long long temp = 0;
+	int len = min(sizeof(prefix2)/sizeof(prefix2[0]), sizeof(prefix)/sizeof(prefix[0]));
+	// cout << len << endl;
+	for(int i = 0; i < len; i++){
+		temp = max(temp, prefix2[i] - prefix[i]);
+	}
+	cout << temp + profit;
+}

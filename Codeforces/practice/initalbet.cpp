@@ -1,0 +1,23 @@
+#include <csdtio>
+#include <algorithm>
+#include <string>
+#include <set>
+#include <map>
+#include <cmath>
+#include <vector>
+#include <iostream>
+#include <numeric>
+#include <tuple>
+using namespace std;
+using ll = long long;
+
+int main(){
+    ios_base::sync_with_stdio(0); cin.tie(0);
+    int sum = 0;
+    for(int i = 0; i < n; i++){
+        int a; cin >> a;
+        sum += a;
+    }
+    if(sum%5) cout << sum/5;
+    else cout << -1;
+}
